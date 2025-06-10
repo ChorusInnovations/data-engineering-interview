@@ -81,6 +81,7 @@ for _ in range(NUM_MEDICATIONS):
           f"{random.randint(5, 500)}mg {random.choice(['once daily', 'twice daily'])}",
           random.choice(["active", "completed", "cancelled"])))
 
+
 # Commit and close connection
 conn.commit()
 cursor.close()

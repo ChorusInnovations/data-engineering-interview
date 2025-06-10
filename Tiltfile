@@ -18,7 +18,14 @@ local_resource(
 
 local_resource(
     "seed_db",
-    "python main.py",
+    "python3 main.py",
+    trigger_mode=TRIGGER_MODE_MANUAL,
+    resource_deps=['init_db']
+)
+
+local_resource(
+    "queries",
+    "pip install prettytable && python3 queries.py",
     trigger_mode=TRIGGER_MODE_MANUAL,
     resource_deps=['init_db']
 )
