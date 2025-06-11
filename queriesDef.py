@@ -58,10 +58,16 @@ QUERIES = {
     """,
     "top_medications": """
         SELECT 
-            id, medication_name, COUNT(*) AS prescription_count
-        FROM "MedicationRequest"
-        GROUP BY id, medication_name
-        ORDER BY prescription_count DESC
+            medication_name,
+            COUNT(*) AS prescription_count
+        FROM 
+            "MedicationRequest"
+        WHERE 
+            medication_name IS NOT NULL
+        GROUP BY 
+            medication_name
+        ORDER BY 
+            prescription_count DESC
         LIMIT 3;
     """,
     "inactive_prescribers": """
@@ -80,12 +86,21 @@ QUERIES = {
         ) AS patient_encounters;
     """,
     "patients_with_meds_no_encounter": """
-        SELECT DISTINCT
+        SELECT 
             p.*
-        FROM "Patient" p
-        JOIN "MedicationRequest" mr ON p.id = mr.patient_id
-        LEFT JOIN "Encounter" e ON p.id = e.patient_id
-        WHERE e.patient_id IS NULL;
+        FROM 
+            "Patient" p
+        WHERE 
+            EXISTS (
+                SELECT 1 
+                FROM "MedicationRequest" mr 
+                WHERE mr.patient_id = p.id
+            )
+            AND NOT EXISTS (
+                SELECT 1 
+                FROM "Encounter" e 
+                WHERE e.patient_id = p.id
+            );
     """,
     "retention_by_cohort": """
         WITH first_encounters AS (
